@@ -1,6 +1,5 @@
 package raf.webProgramiranje.entities;
 
-import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -13,6 +12,7 @@ public class User {
 * (content creator ili admin), status (aktivan/neaktivan) i lozinku. Entitet uz pomoć kog se pristupa
 * CMS-u i koji može biti autor vesti.
 * Na osnovu statusa je moguće zabraniti pristup CMS-u. Lozinke se čuvaju isključivo kao heš vrednosti.*/
+
         @NotNull(message = "email field is required")
         @NotEmpty(message = "email field is required")
         private String email;
@@ -63,6 +63,10 @@ public class User {
         return lastName;
     }
 
+    public boolean isUserStatus() {
+        return userStatus;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -87,6 +91,14 @@ public class User {
         this.userStatus = userStatus;
     }
 
+    public String getPassword() {
+            return this.password;
+    }
+
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }
 
 

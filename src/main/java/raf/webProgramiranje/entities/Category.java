@@ -7,6 +7,7 @@ public class Category {
     * Kategorija - Sistem se sastoji od vesti koje pripadaju određenoj kategoriji
     * (vesti su grupisane u kategorije). Kategorija ima jedinstveno ime i opis.
      */
+    private Integer id;
     private String name;
     private String description;
 
