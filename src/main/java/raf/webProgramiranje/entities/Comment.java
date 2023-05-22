@@ -20,8 +20,6 @@ public class Comment {
         this.comment=comment;
         this.timeCreated=timeCreated;
         this.news=news;
-
-
     }
 
     public String getUsername() {
