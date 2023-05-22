@@ -128,4 +128,31 @@ public class UserRepositoryImpl extends AbstractMariaDBRepository implements Use
 
         return user;
     }
+
+    @Override
+    public User findUser(String email) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        User user=null;
+        try {
+            connection = this.newConnection();
+
+            statement = connection.prepareStatement("select * from user where email=?");
+            statement.setString(1,email);
+            resultSet = statement.executeQuery();
+
+            if (resultSet!=null && resultSet.next()) {
+                user=new User(resultSet.getInt("id"), resultSet.getString("first_name"), resultSet.getString("last_name"), resultSet.getString("email"),resultSet.getString("password") );
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+        return user;
+    }
 }

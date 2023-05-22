@@ -9,4 +9,5 @@ public interface UserRepository {
     public User getUser(Integer id);
     public User addUser(User user);
     public User changeUserStatus(User user);
+    public User findUser(String email);
 }
