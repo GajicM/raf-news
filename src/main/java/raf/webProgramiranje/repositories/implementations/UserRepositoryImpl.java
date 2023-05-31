@@ -1,6 +1,8 @@
 package raf.webProgramiranje.repositories.implementations;
 
 import raf.webProgramiranje.entities.User;
+import raf.webProgramiranje.exceptions.ResourceNotChangeableException;
+import raf.webProgramiranje.exceptions.TestException;
 import raf.webProgramiranje.repositories.AbstractMariaDBRepository;
 import raf.webProgramiranje.repositories.specifications.UserRepository;
 
@@ -22,9 +24,12 @@ public class UserRepositoryImpl extends AbstractMariaDBRepository implements Use
             statement = connection.createStatement();
             resultSet = statement.executeQuery("select * from user");
             while (resultSet!=null&&resultSet.next()) {
-                users.add(new User(resultSet.getInt("id"), resultSet.getString("first_name"),
+             User u   =new User(resultSet.getInt("id"), resultSet.getString("first_name"),
                         resultSet.getString("last_name"),
-                        resultSet.getString("email"),resultSet.getString("password")));
+                        resultSet.getString("email"),resultSet.getString("password"));
+             u.setUserStatus(resultSet.getBoolean("status"));
+             u.setUserType(resultSet.getInt("user_type"));
+                users.add(u);
             }
 
         } catch (Exception e) {
@@ -73,22 +78,28 @@ public class UserRepositoryImpl extends AbstractMariaDBRepository implements Use
             connection = this.newConnection();
 
             String[] generatedColumns = {"id","status"};
-
-            preparedStatement = connection.prepareStatement("INSERT INTO user (first_name,last_name,email,password,user_type) VALUES(?, ?, ?, ? , ?)", generatedColumns);
+            preparedStatement = connection.prepareStatement("INSERT INTO user (first_name,last_name,email,password,user_type) VALUES(?, ?, ?, ? , ?) ON DUPLICATE KEY UPDATE email = email;", generatedColumns);
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setString(3, user.getEmail());
             preparedStatement.setString(4,user.getPassword());
             preparedStatement.setInt(5,user.getUserType());
-            preparedStatement.executeUpdate();
+           int rowsAffected= preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
 
+            resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
-                user.setId(resultSet.getInt("id"));
+                user.setId(resultSet.getInt(1));
+            }else   if(rowsAffected==1 ){
+
+                throw new ResourceNotChangeableException("User email="+user.getEmail()+" cannot be added, already exists");
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+          throw new ResourceNotChangeableException("User email="+user.getEmail()+" cannot be added, already exists");
+
+
         } finally {
             this.closeStatement(preparedStatement);
             this.closeResultSet(resultSet);
@@ -106,15 +117,14 @@ public class UserRepositoryImpl extends AbstractMariaDBRepository implements Use
 
 
 
-            preparedStatement = connection.prepareStatement("UPDATE user" +
-                    "SET user_status = ? WHERE id= ?");
+            preparedStatement = connection.prepareStatement("UPDATE user SET status = ? WHERE id= ?");
             preparedStatement.setBoolean(1, !user.isUserStatus());
             preparedStatement.setInt(2, user.getId());
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
+           int rowsAffected= preparedStatement.executeUpdate();
 
-            if (resultSet.next()) {
-                user.setId(resultSet.getInt("id"));
+
+            if (rowsAffected>0) {
+
                 user.setUserStatus(!user.isUserStatus());
             }
 
@@ -122,7 +132,6 @@ public class UserRepositoryImpl extends AbstractMariaDBRepository implements Use
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
@@ -144,6 +153,8 @@ public class UserRepositoryImpl extends AbstractMariaDBRepository implements Use
 
             if (resultSet!=null && resultSet.next()) {
                 user=new User(resultSet.getInt("id"), resultSet.getString("first_name"), resultSet.getString("last_name"), resultSet.getString("email"),resultSet.getString("password") );
+                user.setUserStatus(resultSet.getBoolean("status"));
+                user.setUserType(resultSet.getInt("user_type"));
             }
 
         } catch (Exception e) {
@@ -154,5 +165,37 @@ public class UserRepositoryImpl extends AbstractMariaDBRepository implements Use
             this.closeConnection(connection);
         }
         return user;
+    }
+
+    @Override
+    public User changeUser(User user) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("UPDATE user SET user_type = ?, first_name=?, last_name=?, email=? WHERE id= ?");
+            preparedStatement.setBoolean(1, user.getUserType()%2!=0);
+            preparedStatement.setString(2, user.getFirstName());
+            preparedStatement.setString(3, user.getLastName());
+            preparedStatement.setString(4, user.getEmail());
+            preparedStatement.setInt(5, user.getId());
+           int rowsAffected= preparedStatement.executeUpdate();
+
+
+            if (rowsAffected>0) {
+              return user;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ResourceNotChangeableException("Cannot change user name:"+user.getFirstName()+" "+ user.getLastName()+ " bc email: "+user.getEmail() +" already exists");
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeConnection(connection);
+        }
+
+        return null;
     }
 }

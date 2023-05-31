@@ -1,7 +1,6 @@
 package raf.webProgramiranje.repositories.implementations;
 
 import raf.webProgramiranje.entities.Comment;
-import raf.webProgramiranje.entities.News;
 import raf.webProgramiranje.repositories.AbstractMariaDBRepository;
 import raf.webProgramiranje.repositories.specifications.CommentRepository;
 
@@ -24,16 +23,21 @@ public class CommentRepositoryImpl extends AbstractMariaDBRepository implements 
             preparedStatement = connection.prepareStatement("INSERT INTO comment (username,comment,fk_news_id) VALUES( ? , ?,?)", generatedColumns);
             preparedStatement.setString(1, comment.getUsername());
             preparedStatement.setString(2, comment.getComment());
+            if(comment.getNews()!=null)
             preparedStatement.setInt(3,comment.getNews().getId());
+            else if(comment.getNewsID()!=null)
+                preparedStatement.setInt(3,comment.getNewsID());
+            else return null;
             preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
 
             if (resultSet.next()) {
-                comment.setId(resultSet.getInt("id"));
+             comment.setId(resultSet.getInt(1));
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+
         } finally {
             this.closeStatement(preparedStatement);
             this.closeResultSet(resultSet);
@@ -62,6 +66,7 @@ public class CommentRepositoryImpl extends AbstractMariaDBRepository implements 
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
+
             } finally {
                 this.closeStatement(preparedStatement);
                 this.closeConnection(connection);
@@ -70,7 +75,7 @@ public class CommentRepositoryImpl extends AbstractMariaDBRepository implements 
         }
 
         @Override
-        public List<Comment> getAllCommentsForNews(News news){
+        public List<Comment> getAllCommentsForNews(Integer newsID){
             List<Comment> comments = new ArrayList<>();
 
             Connection connection = null;
@@ -80,13 +85,13 @@ public class CommentRepositoryImpl extends AbstractMariaDBRepository implements 
                 connection = this.newConnection();
 
                 statement = connection.createStatement();
-                resultSet = statement.executeQuery("select * from comment where fk_news_id="+news.getId());
+                resultSet = statement.executeQuery("select * from comment where fk_news_id="+newsID);
                 while (resultSet!=null&&resultSet.next()) {
                     comments.add(new Comment(resultSet.getInt("id"),
                                 resultSet.getString("username"),
                             resultSet.getString("comment"),
                             resultSet.getDate("time_created"),
-                            news
+                            newsID
                             ));
 
                          }

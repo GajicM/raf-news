@@ -10,4 +10,6 @@ public interface UserRepository {
     public User addUser(User user);
     public User changeUserStatus(User user);
     public User findUser(String email);
+
+    User changeUser(User user);
 }

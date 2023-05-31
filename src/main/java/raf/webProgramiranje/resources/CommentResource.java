@@ -30,9 +30,9 @@ public class CommentResource {
     }
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/getByNews")
+    @Path("/getByNews/{id}")
     @GET
-    public List<Comment> getAllCommentsForNews(News news){
-       return commentService.getAllCommentsForNews(news);
+    public List<Comment> getAllCommentsForNews(@PathParam("id") Integer newsID){
+       return commentService.getAllCommentsForNews(newsID);
     }
 }

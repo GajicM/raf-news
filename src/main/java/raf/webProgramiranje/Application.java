@@ -15,7 +15,7 @@ import raf.webProgramiranje.services.implementations.UserServiceImpl;
 @ApplicationPath("/api")
     public class Application extends ResourceConfig {
         public Application() {
-            System.out.println("AAAAAAAAAAAAAAAAAAAAAAA");
+
             AbstractBinder binder = new AbstractBinder() {
                 @Override
                 protected void configure() {
@@ -33,7 +33,7 @@ import raf.webProgramiranje.services.implementations.UserServiceImpl;
                     this.bindAsContract(UserServiceImpl.class).to(UserService.class).in(Singleton.class);
                 }
             };
-            System.out.println("AAAAAAAAAAAAAAAAAAAAAAA");
+
             register(binder);
             packages("raf.webProgramiranje");
         }

@@ -16,6 +16,8 @@ public class User {
         @NotNull(message = "email field is required")
         @NotEmpty(message = "email field is required")
         private String email;
+    @NotNull(message = "name field is required")
+    @NotEmpty(message = "name field is required")
         private String firstName,lastName;
 
         private int userType;
@@ -41,6 +43,11 @@ public class User {
         public User(Integer id, String firstName, String lastName,String email,String password) {
             this(firstName,lastName,email,password);
             this.id = id;
+        }
+        public User(Integer id, String firstName, String lastName){
+            this.id=id;
+            this.firstName=firstName;
+            this.lastName=lastName;
         }
 
     public Integer getId() {

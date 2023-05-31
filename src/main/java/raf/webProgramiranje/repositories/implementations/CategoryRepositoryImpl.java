@@ -1,5 +1,7 @@
 package raf.webProgramiranje.repositories.implementations;
 
+
+import raf.webProgramiranje.exceptions.ResourceNotChangeableException;
 import raf.webProgramiranje.entities.Category;
 import raf.webProgramiranje.repositories.AbstractMariaDBRepository;
 import raf.webProgramiranje.repositories.specifications.CategoryRepository;
@@ -19,20 +21,27 @@ public class CategoryRepositoryImpl extends AbstractMariaDBRepository implements
 
             String[] generatedColumns = {"id"};
 
-            preparedStatement = connection.prepareStatement("INSERT INTO category (name,description) VALUES( ?,?)", generatedColumns);
+
+            preparedStatement = connection.prepareStatement("INSERT INTO category (name, description) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = name;", generatedColumns);
             preparedStatement.setString(1, category.getName());
             preparedStatement.setString(2, category.getDescription());
 
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
+         int rowsAffected=   preparedStatement.executeUpdate();
+            System.out.println(rowsAffected);
 
+            resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
-                category.setId(resultSet.getInt("id"));
+                category.setId(resultSet.getInt(1));
+            }else   if(rowsAffected==1 ){
+                System.out.println(rowsAffected);
+                throw new ResourceNotChangeableException("cannot add same category");
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
+            throw new ResourceNotChangeableException("cannot add same category");
+        }
+        finally {
             this.closeStatement(preparedStatement);
             this.closeResultSet(resultSet);
             this.closeConnection(connection);
@@ -42,7 +51,7 @@ public class CategoryRepositoryImpl extends AbstractMariaDBRepository implements
 
     }
     @Override
-    public Category deleteCategory(Category category){
+    public boolean deleteCategory(Integer category){
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -51,20 +60,19 @@ public class CategoryRepositoryImpl extends AbstractMariaDBRepository implements
             connection = this.newConnection();
 
             preparedStatement = connection.prepareStatement("DELETE FROM category WHERE id = ?");
-            preparedStatement.setInt(1, category.getId());
+            preparedStatement.setInt(1, category);
 
-            int rowsAffected = preparedStatement.executeUpdate();
-
-            if (rowsAffected > 0) {
-                category=new Category();
-            }
+          int rowsAffected=  preparedStatement.executeUpdate();
+            if(rowsAffected>0)return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new ResourceNotChangeableException("Category id="+category+" cannot be deleted while it has news");
         } finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
         }
-        return category;
+
+        return false;
     }
     @Override
     public List<Category> getAllCategories(){
@@ -96,7 +104,33 @@ public class CategoryRepositoryImpl extends AbstractMariaDBRepository implements
 
         return categories;
     }
+@Override
+public Category changeCategory(Category category) {
+    Connection connection = null;
+    PreparedStatement preparedStatement = null;
+    try {
+        connection = this.newConnection();
+       preparedStatement = connection.prepareStatement("UPDATE category SET name = ?, description = ? WHERE id = ?");
+        preparedStatement.setString(1, category.getName());
+        preparedStatement.setString(2, category.getDescription());
+        preparedStatement.setInt(3, category.getId());
 
+        int rowsAffected = preparedStatement.executeUpdate();
+
+        if (rowsAffected > 0) {
+            return category;
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        throw new ResourceNotChangeableException("Cannot change category name:"+category.getName()+" bc it already exists");
+    } finally {
+        this.closeStatement(preparedStatement);
+        this.closeConnection(connection);
+    }
+
+    return null; // Update failed
+}
     }
 
 

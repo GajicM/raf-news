@@ -1,5 +1,7 @@
 package raf.webProgramiranje.entities;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,14 +13,18 @@ public class News {
     * komentare čitalaca, kao i tagove na osnovu kojih će se
     * raditi pretraga srodnih vesti. Vest pripada jednoj kategoriji.*/
     private Integer id;
+    @NotEmpty (message = "title field is required")
+    @NotNull(message = "title field is required")
     private String title;
+    @NotEmpty
     private String text;
     private Date date;
     private int visits;
-
+    @NotNull(message = "author field is required")
     private User author;
     private List<Comment> comment; //lista
     private List<Tag> tags;
+    @NotNull(message = "category field is required")
     private Category category;
     public News(){}
 
@@ -115,5 +121,20 @@ public class News {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", text='" + text + '\'' +
+                ", date=" + date +
+                ", visits=" + visits +
+                ", author=" + author +
+                ", comment=" + comment +
+                ", tags=" + tags +
+                ", category=" + category +
+                '}';
     }
 }

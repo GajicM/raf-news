@@ -1,6 +1,5 @@
 package raf.webProgramiranje.services.implementations;
 
-import raf.webProgramiranje.entities.Category;
 import raf.webProgramiranje.entities.News;
 import raf.webProgramiranje.entities.Tag;
 import raf.webProgramiranje.repositories.specifications.NewsRepository;
@@ -33,8 +32,8 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public News deleteNews(News news) {
-        return newsRepository.deleteNews(news);
+    public boolean deleteNews(Integer newsID) {
+        return newsRepository.deleteNews(newsID);
     }
 
     @Override
@@ -48,12 +47,26 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public List<News> getNewsByTag(Tag tag) {
-        return newsRepository.getNewsByTag(tag);
+    public List<News> getNewsByTag(Integer tagID) {
+        return newsRepository.getNewsByTag(tagID);
     }
 
     @Override
-    public List<News> getNewsByCategory(Category category) {
+    public List<News> getNewsByCategory(Integer category) {
         return newsRepository.getNewsByCategory(category);
     }
+
+    @Override
+    public List<News> getMostReadNews() {
+        return newsRepository.getMostReadNews();
+    }
+    @Override
+   public List<News> getRecentNews(){
+        return newsRepository.getRecentNews();
+   }
+@Override
+   public News changeTagInNews(News news, List<Tag> tags){
+        return newsRepository.changeTagInNews(news,tags);
+   }
+
 }

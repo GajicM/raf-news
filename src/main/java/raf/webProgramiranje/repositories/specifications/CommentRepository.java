@@ -12,5 +12,5 @@ public interface CommentRepository {
 
     Comment deleteComment(Comment comment);
 
-    List<Comment> getAllCommentsForNews(News news);
+    List<Comment> getAllCommentsForNews(Integer newsID);
 }

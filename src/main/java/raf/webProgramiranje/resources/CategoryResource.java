@@ -22,18 +22,27 @@ public class CategoryResource {
    }
 
     @DELETE
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/removeCategory")
-    public Category deleteCategory(Category category){
-       return this.categoryService.deleteCategory(category);
+    @Path("/removeCategory/{id}")
+    public boolean deleteCategory(@PathParam("id") Integer categoryID){
+
+       return this.categoryService.deleteCategory(categoryID);
+
     }
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("")
+    @Path("/getAllCategories")
     public List<Category> getAllCategories(){
        return this.categoryService.getAllCategories();
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/changeCategory")
+    public Category changeCategory(Category category){
+        System.out.println("ULAZI OVDE"+ category);
+        return this.categoryService.changeCategory(category);
     }
 }

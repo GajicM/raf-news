@@ -22,7 +22,7 @@ public class CommentServiceImpl  implements CommentService {
     }
 
     @Override
-    public List<Comment> getAllCommentsForNews(News news) {
-        return commentRepository.getAllCommentsForNews(news);
+    public List<Comment> getAllCommentsForNews(Integer newsID) {
+        return commentRepository.getAllCommentsForNews(newsID);
     }
 }

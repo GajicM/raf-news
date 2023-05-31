@@ -1,6 +1,9 @@
 package raf.webProgramiranje.entities;
 
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 public class Category {
 
     /*
@@ -8,7 +11,10 @@ public class Category {
     * (vesti su grupisane u kategorije). Kategorija ima jedinstveno ime i opis.
      */
     private Integer id;
+    @NotNull(message = "name field is required")
+    @NotEmpty(message = "name field is required")
     private String name;
+    @NotEmpty(message = "name field is required")
     private String description;
 
     public String getDescription() {

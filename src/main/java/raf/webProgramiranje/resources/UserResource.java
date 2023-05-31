@@ -39,12 +39,20 @@ public class UserResource {
     public User getUser(@PathParam("id") int id){
         return this.userService.getUser(id);
     }
-    @PATCH
+    @PUT
     @Path("/changeUserStatus")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public User changeUserStatus(User user){
         return this.userService.changeUserStatus(user);
+    }
+
+    @PUT
+    @Path("/changeUser")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public User changeUser(User user){
+        return this.userService.changeUser(user);
     }
 
 
@@ -55,7 +63,7 @@ public class UserResource {
     {
         Map<String, String> response = new HashMap<>();
 
-        String jwt = this.userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+        String jwt = this.userService.login(loginRequest.getEmail(), loginRequest.getPassword());
         if (jwt == null) {
             response.put("message", "These credentials do not match our records");
             return Response.status(422, "Unprocessable Entity").entity(response).build();
@@ -65,5 +73,6 @@ public class UserResource {
 
         return Response.ok(response).build();
     }
+
 
 }

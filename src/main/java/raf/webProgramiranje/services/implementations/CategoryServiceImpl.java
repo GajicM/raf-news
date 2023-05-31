@@ -16,12 +16,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category deleteCategory(Category category) {
-        return categoryRepository.deleteCategory(category);
+    public boolean deleteCategory(Integer category) {
+      return   categoryRepository.deleteCategory(category);
     }
 
     @Override
     public List<Category> getAllCategories() {
         return categoryRepository.getAllCategories();
+    }
+@Override
+    public Category changeCategory(Category category) {
+        return categoryRepository.changeCategory(category);
     }
 }
