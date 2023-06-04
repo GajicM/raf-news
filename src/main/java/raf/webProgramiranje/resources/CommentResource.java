@@ -5,6 +5,7 @@ import raf.webProgramiranje.entities.News;
 import raf.webProgramiranje.services.CommentService;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
@@ -18,7 +19,7 @@ public class CommentResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/addComment")
     @POST
-   public Comment addComment(Comment comment){
+   public Comment addComment(@Valid Comment comment){
        return commentService.addComment(comment);
    }
     @Produces(MediaType.APPLICATION_JSON)

@@ -12,4 +12,5 @@ public interface UserRepository {
     public User findUser(String email);
 
     User changeUser(User user);
+    public List<User> getAllUsers(int limit, int offset);
 }

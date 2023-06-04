@@ -25,7 +25,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/addUser")
-    public User addUser(User user) {
+    public User addUser(@Valid User user) {
         return this.userService.addUser(user);
     }
     @GET
@@ -74,5 +74,16 @@ public class UserResource {
         return Response.ok(response).build();
     }
 
+
+
+
+
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/getAllUsers")
+    public List<User> getAllUsers(@QueryParam("offset")@DefaultValue("0") int offset,@QueryParam("limit")@DefaultValue("5") int limit){
+        return this.userService.getAllUsers(limit,offset);
+    }
 
 }

@@ -131,6 +131,39 @@ public Category changeCategory(Category category) {
 
     return null; // Update failed
 }
+
+    @Override
+    public List<Category> getAllCategories(int offset, int limit) {
+        List<Category> categories = new ArrayList<>();
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("SELECT * FROM category  LIMIT ? OFFSET ?");
+            preparedStatement.setInt(1, limit);
+            preparedStatement.setInt(2, offset);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                categories.add(new Category(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("description")));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResourceNotChangeableException("Something went wrong ");
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+        return categories;
+    }
+
+
+
     }
 
 

@@ -22,4 +22,6 @@ public interface NewsRepository {
     List<News> getMostReadNews();
 
     List<News> getRecentNews();
+
+    List<News> getAllNews(int offset, int limit);
 }

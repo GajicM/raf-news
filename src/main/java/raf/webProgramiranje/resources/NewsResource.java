@@ -9,6 +9,7 @@ import raf.webProgramiranje.services.NewsService;
 
 import javax.inject.Inject;
 import javax.print.attribute.standard.Media;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -47,7 +48,7 @@ public class NewsResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/changeNews")
-    public News changeNews(News news){
+    public News changeNews(@Valid News news){
         return newsService.changeNews(news);
     }
 
@@ -124,4 +125,16 @@ public class NewsResource {
         News updatedNews = newsService.changeTagInNews(news, tagsx);
         return Response.ok(updatedNews).build();
    }
+
+    // TODO ne koristi na frontu dok ne skontas koji je zahtev zapravo, jer ako saljes samo trenutnu stranicu, nemas paginaciju za
+    //  sledecu stranicu sem ako ne posaljes zahtev za broj stranica, ili zahtev za sledecu stranicu iako ona mozda ne postoji,
+    //  ali u tom slucaju ne mozes da korsitis plain bootstrapvue pagination jer se ona binduje za listu.
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/getAllNewsPaginated")
+    public List<News> getAllNews(@QueryParam("offset")@DefaultValue("0") int offset,@QueryParam("limit") @DefaultValue("6")int limit){
+        System.out.println("ulazi ovde");
+        return newsService.getAllNews();
+
+    }
 }

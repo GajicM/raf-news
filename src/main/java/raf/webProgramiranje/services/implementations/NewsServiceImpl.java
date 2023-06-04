@@ -68,5 +68,6 @@ public class NewsServiceImpl implements NewsService {
    public News changeTagInNews(News news, List<Tag> tags){
         return newsRepository.changeTagInNews(news,tags);
    }
-
+   @Override
+   public List<News> getAllNews(int offset, int limit){return newsRepository.getAllNews(offset,limit);}
 }

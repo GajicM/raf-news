@@ -2,6 +2,7 @@ package raf.webProgramiranje.filters;
 
 
 
+import raf.webProgramiranje.resources.CommentResource;
 import raf.webProgramiranje.resources.UserResource;
 import raf.webProgramiranje.services.UserService;
 
@@ -67,6 +68,8 @@ public class AuthFilter implements ContainerRequestFilter {
         for (Object matchedResource : matchedResources) {
             if (matchedResource instanceof UserResource)
                 return true;
+            if(matchedResource instanceof CommentResource)
+                return false;
            //TODO vidi koje resurse treba da Auth-ujes
         }
         if(req.getMethod().equalsIgnoreCase("GET")){
@@ -88,6 +91,8 @@ public class AuthFilter implements ContainerRequestFilter {
         for (Object matchedResource : matchedResources) {
             if (matchedResource instanceof UserResource)
                 return true;
+            if(matchedResource instanceof CommentResource)
+                return false;
 
         }
 

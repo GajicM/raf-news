@@ -596,4 +596,58 @@ public class NewsRepositoryImpl extends AbstractMariaDBRepository implements New
     }
 
 
+    @Override
+    public List<News> getAllNews(int offset, int limit) {
+        List<News> news = new ArrayList<>();
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            statement = connection.prepareStatement("select * from news   join user u on u.id = news.fk_user_id join category c on c.id = news.fk_category_id LIMIT ? OFFSET  ?");
+            statement.setInt(1,limit);
+            statement.setInt(2,offset);
+            resultSet = statement.executeQuery();
+            while (resultSet!=null&&resultSet.next()) {
+
+                User u=new User(
+                        resultSet.getInt("u.id"),
+                        resultSet.getString("u.first_name"),
+                        resultSet.getString("u.last_name")
+                );
+                Category c=new Category(resultSet.getInt("c.id"),
+                        resultSet.getString("c.name"),
+                        resultSet.getString("c.description"));
+                Statement s2= connection.createStatement();
+                ResultSet rsTags= s2.executeQuery("select * from newstag join tag t on newstag.fk_tag_id = t.id where fk_news_id="+resultSet.getString("news.id"));
+                List<Tag> tagList=new ArrayList<>();
+                while (rsTags!=null&&rsTags.next()) {
+                    tagList.add(new Tag(rsTags.getInt("t.id"),rsTags.getString("t.tag")));
+                }
+                news.add(new News(resultSet.getInt("id"),
+                        resultSet.getString("title"),
+                        resultSet.getString("text"),
+                        resultSet.getDate("created_at"),
+                        resultSet.getInt("visits"),
+                        u,
+                        tagList,
+                        c
+                ));
+
+
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return news;
+    }
 }

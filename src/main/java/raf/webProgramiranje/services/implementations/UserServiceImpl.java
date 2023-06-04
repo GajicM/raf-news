@@ -104,4 +104,8 @@ public class UserServiceImpl implements UserService {
     public User changeUser(User user) {
         return userRepository.changeUser(user);
     }
+    @Override
+    public List<User> getAllUsers(int limit, int offset){
+        return userRepository.getAllUsers(limit,offset);
+    }
 }

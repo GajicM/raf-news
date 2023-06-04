@@ -28,4 +28,8 @@ public class CategoryServiceImpl implements CategoryService {
     public Category changeCategory(Category category) {
         return categoryRepository.changeCategory(category);
     }
+    @Override
+    public List<Category> getAllCategories(int offset, int limit){
+        return categoryRepository.getAllCategories(offset,limit);
+    }
 }

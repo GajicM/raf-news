@@ -19,7 +19,8 @@ public class AbstractMariaDBRepository {
 
 
             return DriverManager.getConnection(
-                    "jdbc:mariadb://localhost:3306/webprojekat?user=root&password="   );
+                   // "jdbc:mariadb://localhost:3306/webprojekat?user=root&password="
+                    "jdbc:mariadb://j5zntocs2dn6c3fj.chr7pe7iynqr.eu-west-1.rds.amazonaws.com:3306/cvoseq9djutbfm9l?user=zv04mgt568wjhslu&password=tgbp5cs2k72ev1az");
 
         }
 

@@ -14,4 +14,6 @@ public interface UserService {
     boolean isAuthorized(String token);
     boolean isAuthorizedAdmin(String token);
     User changeUser(User user);
+
+    List<User> getAllUsers(int limit, int offset);
 }

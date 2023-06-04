@@ -198,4 +198,38 @@ public class UserRepositoryImpl extends AbstractMariaDBRepository implements Use
 
         return null;
     }
+
+    @Override
+    public List<User> getAllUsers(int limit, int offset) {
+        List<User> users = new ArrayList<>();
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            statement = connection.prepareStatement("select * from user LIMIT ?  OFFSET ?");
+            statement.setInt(1,limit);
+            statement.setInt(2,offset);
+            resultSet = statement.executeQuery();
+            while (resultSet!=null&&resultSet.next()) {
+                User u   =new User(resultSet.getInt("id"), resultSet.getString("first_name"),
+                        resultSet.getString("last_name"),
+                        resultSet.getString("email"),resultSet.getString("password"));
+                u.setUserStatus(resultSet.getBoolean("status"));
+                u.setUserType(resultSet.getInt("user_type"));
+                users.add(u);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return users;
+    }
 }

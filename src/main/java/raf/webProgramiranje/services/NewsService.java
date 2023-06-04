@@ -22,4 +22,6 @@ public interface NewsService {
     List<News> getRecentNews();
 
     News changeTagInNews(News news, List<Tag> tags);
+
+    List<News> getAllNews(int offset, int limit);
 }

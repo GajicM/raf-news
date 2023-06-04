@@ -12,4 +12,6 @@ public interface CategoryRepository {
     List<Category> getAllCategories();
 
     Category changeCategory(Category category);
+
+    List<Category> getAllCategories(int offset, int limit);
 }
